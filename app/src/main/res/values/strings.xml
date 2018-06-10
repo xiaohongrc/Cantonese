@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">粤语自己学</string>
+    <string name="voice_hint">点击话筒讲普通话，或输入文字</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="tip_click_again_exist" >双击 退出 应用</string>
+    <string name="en_mode_tip">英语模式，请讲英语或输入英文</string>
+</resources>
