@@ -1,17 +1,22 @@
 package hong.cantonese;
 
+import android.*;
+import android.Manifest;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -28,11 +33,14 @@ import com.iflytek.cloud.RecognizerListener;
 import com.iflytek.cloud.RecognizerResult;
 import com.iflytek.cloud.SpeechError;
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.commonsdk.debug.UMLogUtils;
 
 import java.util.ArrayList;
 
 import hong.cantonese.adapter.SentenceAdapter;
 import hong.cantonese.cache.CacheManager;
+import hong.cantonese.utils.LogUtil;
+import hong.cantonese.utils.PermissionUtil;
 import hong.cantonese.voicereco.Synthesizer;
 import hong.cantonese.voicereco.VoiceReco;
 import hong.cantonese.voicereco.bean.ClearWord;
@@ -43,6 +51,7 @@ import static java.lang.System.currentTimeMillis;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final int PERMISSION_CODE_SEETTING = 1002;
     private VoiceReco voiceReco;
     private EditText etVoiceText;
     public StringBuilder stringBuilder = new StringBuilder();
@@ -56,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Button btSpeak;
     public static int currentIndex = 0;
     private InputMethodManager imm;
-    private Handler handler =  new Handler();
+    private Handler handler = new Handler();
     private long mLastExitTime;
     private DrawerLayout drawer;
 
@@ -64,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         long st = currentTimeMillis();
-        System.out.println("st=onCreate========="+st);
+        System.out.println("st=onCreate=========" + st);
 
 
         super.onCreate(savedInstanceState);
@@ -123,9 +132,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         long et = System.currentTimeMillis();
-        System.out.println(et+"et=onCreate========="+(et-st));
+        System.out.println(et + "et=onCreate=========" + (et - st));
+
+        PermissionUtil.INSTANCE.requestPermission(this, new String[]{Manifest.permission.RECORD_AUDIO}, ConstantValue.PERMISSION_CODE_MIC);
 
     }
+
 
     private AdapterView.OnItemClickListener mItemListener = new AdapterView.OnItemClickListener() {
         @Override
@@ -182,8 +194,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     // 分享
-    private void share(){
-        Intent intent=new Intent(Intent.ACTION_SEND);
+    private void share() {
+        Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("image/*");
         intent.putExtra(Intent.EXTRA_SUBJECT, "粤语自己学");
         intent.putExtra(Intent.EXTRA_TEXT, "推荐一个练习粤语和英语的应用（粤语自己学），下载请到应用商店或戳此链接：http://a.app.qq.com/o/simple.jsp?pkgname=hong.cantonese");
@@ -211,6 +223,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.bt_voice_reco:
+                    if (!PermissionUtil.INSTANCE.requestPermission(MainActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, ConstantValue.PERMISSION_CODE_MIC)) {
+                        return;
+                    }
+
                     if (!isRecording) {
                         isRecording = true;
                         myVoiceDialog.setVisibility(View.VISIBLE);
@@ -341,15 +357,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume() {
         super.onResume();
-        // umeng统计
 
         MobclickAgent.onResume(this);
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        // umeng统计
         MobclickAgent.onPause(this);
     }
 
@@ -367,7 +382,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        if (drawer.isDrawerOpen(GravityCompat.START)){
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
             return;
         }
@@ -380,5 +395,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Toast.makeText(this, R.string.tip_click_again_exist, Toast.LENGTH_LONG)
                     .show();
         }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        for (int result : grantResults) {
+            LogUtil.d(this, "result = " + result);
+        }
+        LogUtil.d(this, "requestCode = " + requestCode);
+
+        boolean showExplain = PermissionUtil.INSTANCE.shouldShowExplain(this, permissions);
+        LogUtil.d(this, "showExplain = " + showExplain);
+        if (showExplain) {
+            Toast.makeText(this, R.string.request_permission_mic, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, R.string.request_permission_mic, Toast.LENGTH_LONG).show();
+            PermissionUtil.INSTANCE.forwardSetting(this, PERMISSION_CODE_SEETTING);
+        }
+
     }
 }

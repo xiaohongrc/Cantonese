@@ -26,6 +26,8 @@ public interface ConstantValue {
     String UMENG_APP_KEY = "587c835f07fe65206500152d";
     String UMENG_CHANNEL = "google";
 
+    int PERMISSION_CODE_MIC = 1001;
+
 
 
 
