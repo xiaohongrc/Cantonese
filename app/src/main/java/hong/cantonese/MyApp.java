@@ -2,6 +2,7 @@ package hong.cantonese;
 
 import android.app.Application;
 
+import com.google.android.gms.ads.MobileAds;
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
 import com.umeng.commonsdk.UMConfigure;
@@ -30,6 +31,12 @@ public class MyApp extends Application {
         System.out.println(et+"et=========="+(et-st));
 
     }
+
+
+    private void initAdMob() {
+        MobileAds.initialize(this, ConstantValue.ADMOB_APP_ID);
+    }
+
 
     private void initUmeng() {
         UMConfigure.init(this, ConstantValue.UMENG_APP_KEY, ConstantValue.UMENG_CHANNEL, 0, null);

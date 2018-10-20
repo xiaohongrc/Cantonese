@@ -1,22 +1,19 @@
 package hong.cantonese;
 
-import android.*;
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -28,12 +25,14 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.gson.Gson;
 import com.iflytek.cloud.RecognizerListener;
 import com.iflytek.cloud.RecognizerResult;
 import com.iflytek.cloud.SpeechError;
 import com.umeng.analytics.MobclickAgent;
-import com.umeng.commonsdk.debug.UMLogUtils;
 
 import java.util.ArrayList;
 
@@ -65,9 +64,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Button btSpeak;
     public static int currentIndex = 0;
     private InputMethodManager imm;
-    private Handler handler = new Handler();
     private long mLastExitTime;
     private DrawerLayout drawer;
+    private AdView adView_main;
 
 
     @Override
@@ -84,43 +83,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (listFromFile != null && listFromFile.size() > 0 && !TextUtils.isEmpty(listFromFile.get(0))) {
             voiceTextList = listFromFile;
         }
-        lvVoiceTexts = (ListView) findViewById(R.id.lv_voicetext);
+        lvVoiceTexts = findViewById(R.id.lv_voicetext);
         sentenceAdapter = new SentenceAdapter(voiceTextList, this);
         lvVoiceTexts.setAdapter(sentenceAdapter);
 
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                Process.setThreadPriority(Process.FIRST_APPLICATION_UID);
-//                // 获取保存的句子集合
-//
-//                if (sentenceAdapter != null){
-//                    sentenceAdapter.setmVoiceTextList(voiceTextList);
-//                }
-//
-//            }
-//        }).start();
-
-
-        // upush
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        etVoiceText = (EditText) findViewById(R.id.et_voicetext);
-        btVoiceReco = (ImageButton) findViewById(R.id.bt_voice_reco);
-        btSpeak = (Button) findViewById(R.id.bt_speak);
+        etVoiceText = findViewById(R.id.et_voicetext);
+        btVoiceReco = findViewById(R.id.bt_voice_reco);
+        adView_main = findViewById(R.id.adView_main);
+        btSpeak = findViewById(R.id.bt_speak);
 
-        myVoiceDialog = (ImageView) findViewById(R.id.iv_voice_tip);
+        myVoiceDialog = findViewById(R.id.iv_voice_tip);
         MyClickListener recogListener = new MyClickListener();
         btVoiceReco.setOnClickListener(recogListener);
         btSpeak.setOnClickListener(recogListener);
@@ -174,8 +159,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             synthesizer.initSynthesizer();
             voiceReco.initVoiceRecorgnize();
 
-        } else if (id == R.id.nav_henan) {
-            GloabalParams.SynthesizerLanguage = ConstantValue.HENAN;
+        } else if (id == R.id.nav_mandarin) {
+            GloabalParams.SynthesizerLanguage = ConstantValue.MANDARIN;
             GloabalParams.RecorgnizeLanguage = ConstantValue.LANGUAGE_CN;
             GloabalParams.RecorgnizeAccent = ConstantValue.ACCENT_MANDARIN;
             synthesizer.initSynthesizer();
@@ -359,7 +344,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onResume();
 
         MobclickAgent.onResume(this);
+        loadAdView();
+    }
 
+
+    private void loadAdView() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView_main.loadAd(adRequest);
+        adView_main.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                LogUtil.d(this, "onAdLoaded()");
+            }
+        });
     }
 
     @Override
@@ -401,18 +399,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        boolean isGranted = false;
         for (int result : grantResults) {
             LogUtil.d(this, "result = " + result);
+            if (result == PackageManager.PERMISSION_GRANTED) {
+                isGranted = true;
+            }
         }
         LogUtil.d(this, "requestCode = " + requestCode);
-
-        boolean showExplain = PermissionUtil.INSTANCE.shouldShowExplain(this, permissions);
-        LogUtil.d(this, "showExplain = " + showExplain);
-        if (showExplain) {
-            Toast.makeText(this, R.string.request_permission_mic, Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(this, R.string.request_permission_mic, Toast.LENGTH_LONG).show();
-            PermissionUtil.INSTANCE.forwardSetting(this, PERMISSION_CODE_SEETTING);
+        if (!isGranted) {
+            boolean showExplain = PermissionUtil.INSTANCE.shouldShowExplain(this, permissions);
+            LogUtil.d(this, "showExplain = " + showExplain);
+            if (showExplain) {
+                Toast.makeText(this, R.string.request_permission_mic, Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, R.string.request_permission_mic, Toast.LENGTH_LONG).show();
+                PermissionUtil.INSTANCE.forwardSetting(this, PERMISSION_CODE_SEETTING);
+            }
         }
 
     }

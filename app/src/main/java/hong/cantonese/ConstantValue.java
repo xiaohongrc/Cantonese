@@ -2,6 +2,7 @@ package hong.cantonese;
 
 /**
  * Created by hongenit on 2017/1/31.
+ * desc:
  */
 
 public interface ConstantValue {
@@ -29,7 +30,5 @@ public interface ConstantValue {
     int PERMISSION_CODE_MIC = 1001;
 
 
-
-
-
+    java.lang.String ADMOB_APP_ID = "ca-app-pub-1616641096587052~4025812093";
 }

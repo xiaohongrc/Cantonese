@@ -24,6 +24,9 @@ android {
 
 
     productFlavors {
+        google {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "google"]
+        }
         anzhi {
             manifestPlaceholders = [UMENG_CHANNEL_VALUE: "anzhi"]
         }
@@ -70,7 +73,7 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-core:16.0.0'
     implementation 'com.google.firebase:firebase-ads:15.0.1'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
 
 }

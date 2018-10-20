@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="真人发音，采用科大讯飞语音合成及识别技术"
+        android:text="@string/app_intro"
        android:gravity="center_horizontal"
 
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />

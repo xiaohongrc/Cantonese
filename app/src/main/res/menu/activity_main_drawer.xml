@@ -3,21 +3,21 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_mandarin"
+            android:icon="@drawable/presence_online"
+            android:title="@string/accent_mandarin" />
+        <item
             android:id="@+id/nav_cantonese"
             android:icon="@drawable/presence_online"
-            android:title="粤语" />
+            android:title="@string/accent_cantonese" />
         <item
             android:id="@+id/nav_english"
             android:icon="@drawable/presence_online"
-            android:title="英语" />
+            android:title="@string/accent_english" />
         <item
             android:id="@+id/nav_sichuan"
             android:icon="@drawable/presence_online"
-            android:title="四川话" />
-        <item
-            android:id="@+id/nav_henan"
-            android:icon="@drawable/presence_online"
-            android:title="河南话" />
+            android:title="@string/accent_sichuan" />
     </group>
 
     <item android:title="Communicate">
@@ -25,11 +25,11 @@
             <item
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
-                android:title="分享给朋友" />
+                android:title="@string/menu_share" />
             <item
                 android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"
-                android:title="鼓励或吐槽开发者" />
+                android:title="@string/menu_rate" />
         </menu>
     </item>
 
