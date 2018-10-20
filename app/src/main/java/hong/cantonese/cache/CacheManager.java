@@ -2,6 +2,8 @@ package hong.cantonese.cache;
 
 import android.os.Environment;
 
+import com.umeng.commonsdk.debug.E;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -84,7 +86,12 @@ public class CacheManager {
         if (lastIndexOf == -1) {
             return "";
         }
-        sb.delete(lastIndexOf, lastIndexOf + 1);
+        try {
+
+            sb.delete(lastIndexOf, lastIndexOf + 1);
+        } catch (StringIndexOutOfBoundsException e) {
+            return "";
+        }
         return sb.toString();
     }
 
