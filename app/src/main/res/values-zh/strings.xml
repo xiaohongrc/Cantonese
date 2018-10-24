@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">粤语自己学</string>
+    <string name="voice_hint">点击话筒讲普通话，或输入文字</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">设置</string>
+    <string name="tip_click_again_exist" >双击 退出 应用</string>
+    <string name="en_mode_tip">英语模式，请讲英语或输入英文</string>
+    <string name="request_permission_mic">请允许录音，否则无法进行语音识别</string>
+    <string name="reading">朗读</string>
+    <string name="menu_share">分享给朋友</string>
+    <string name="menu_rate">鼓励或吐槽开发者</string>
+    <string name="accent_sichuan">四川话</string>
+    <string name="accent_english">英语</string>
+    <string name="accent_cantonese">粤语</string>
+    <string name="accent_mandarin">普通话</string>
+    <string name="app_intro">真人发音，采用科大讯飞语音合成及识别技术</string>
+
+</resources>

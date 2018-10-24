@@ -2,6 +2,7 @@ package hong.cantonese;
 
 /**
  * Created by hongenit on 2017/1/31.
+ * desc:
  */
 
 public interface ConstantValue {
@@ -24,12 +25,10 @@ public interface ConstantValue {
     String ACCENT_LMZ = "lmz";
     String ACCENT_NULL = null;
     String UMENG_APP_KEY = "587c835f07fe65206500152d";
-    String UMENG_CHANNEL = "google";
+    String UMENG_CHANNEL = BuildConfig.UMENG_CHANNEL;
 
     int PERMISSION_CODE_MIC = 1001;
 
 
-
-
-
+    String ADMOB_APP_ID = "ca-app-pub-1616641096587052~6645529829";
 }
