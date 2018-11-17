@@ -2,6 +2,8 @@ package hong.cantonese.utils;
 
 import android.util.Log;
 
+import hong.cantonese.BuildConfig;
+
 /**
  * Created by Xiaohong on 2018/6/15.
  * desc:
@@ -9,7 +11,7 @@ import android.util.Log;
 
 public class LogUtil {
 
-    final static boolean WILL_LOG = true;
+    final static boolean WILL_LOG = BuildConfig.WILL_LOG;
 
 
     public static void hong(String message) {

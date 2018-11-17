@@ -44,17 +44,30 @@ android {
             buildConfigField "String", "UMENG_CHANNEL", "\"huawei\""
         }
 
-        360 {
+        _360 {
             buildConfigField "String", "UMENG_CHANNEL", "\"360\""
         }
 
         baidu {
             buildConfigField "String", "UMENG_CHANNEL", "\"baidu\""
         }
-//
-//         {
-//            buildConfigField "String", "UMENG_CHANNEL", "\"\""
-//        }
+
+        anzhi {
+            buildConfigField "String", "UMENG_CHANNEL", "\"anzhi\""
+            buildConfigField "Boolean", "WILL_LOG", "false"
+
+        }
+
+
+        formal{
+            buildConfigField "String", "UMENG_CHANNEL", "\"anzhi\""
+            buildConfigField "Boolean", "WILL_LOG", "false"
+        }
+
+        mytest{
+            buildConfigField "String", "UMENG_CHANNEL", "\"debug\""
+            buildConfigField "Boolean", "WILL_LOG", "true"
+        }
 
     }
 
@@ -77,6 +90,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.0'
     implementation 'com.google.firebase:firebase-ads:15.0.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
 
 
 }

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="signup_confirm_margin_top">57dp</dimen>
+    <dimen name="signup_nickname_margin_top">18dp</dimen>
+    <dimen name="signup_gender_margin_top">18dp</dimen>
+    <dimen name="signup_icon_margin_top">20dp</dimen>
+    <dimen name="match_history_country_max_width">60dp</dimen>
+    <dimen name="match_history_gender_margin_country">6dp</dimen>
+    <dimen name="guide_top_padding">30dp</dimen>
+    <dimen name="guide_text_margin_image">20dp</dimen>
+
+
+    <dimen name="item_diamond_space_ver">5dp</dimen>
+    <dimen name="item_diamond_space_hor">0dp</dimen>
+    <dimen name="diamond_rank_educate_margintop">20dp</dimen>
+    <dimen name="diamond_rank_icon_size">58dp</dimen>
+    <dimen name="diamond_rank_people_grid_height">250dp</dimen>
+    <dimen name="diamond_rank_icon_container_size">60dp</dimen>
+    <dimen name="item_diamond_name_margin_icon">3dp</dimen>
+    <dimen name="account_btn_confirm_bottom">20dp</dimen>
+    <dimen name="big_deal_bg_size">200dp</dimen>
+    <dimen name="big_deal_margin_top_coins">100dp</dimen>
+    <dimen name="margin_pending_third_part_signin">-10dp</dimen>
+    <dimen name="search_animation_size">200dp</dimen>
+    <dimen name="margin_bottom_get_it">12dp</dimen>
+    <dimen name="size_headimg">208dp</dimen>
+    <dimen name="active_icon_size">119dp</dimen>
+    <dimen name="fullscreen_dialog_width">320dp</dimen>
+    <dimen name="filter_dialog_width">256dp</dimen>
+
+
+    <dimen name="add_friend_gift_image_max_size">120dp</dimen>
+
+    <dimen name="signin_input_button_margintop">43dp</dimen>
+    <dimen name="video_message_max_width">213dp</dimen>
+
+
+
+
+</resources>
