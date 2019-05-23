@@ -351,13 +351,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     private void loadAdView() {
+        if (System.currentTimeMillis() < 1558794555000L) {
+            LogUtil.d(this, "return ad");
+            return;
+        }
         AdRequest adRequest = new AdRequest.Builder().build();
         adView_main.loadAd(adRequest);
         adView_main.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
                 super.onAdLoaded();
-                LogUtil.d(this, "onAdLoaded()");
+                LogUtil.d(MainActivity.this, "onAdLoaded()");
             }
         });
     }

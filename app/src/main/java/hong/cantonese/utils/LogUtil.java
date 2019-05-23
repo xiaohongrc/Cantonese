@@ -11,7 +11,7 @@ import hong.cantonese.BuildConfig;
 
 public class LogUtil {
 
-    final static boolean WILL_LOG = BuildConfig.WILL_LOG;
+    final static boolean WILL_LOG = BuildConfig.DEBUG;
 
 
     public static void hong(String message) {
