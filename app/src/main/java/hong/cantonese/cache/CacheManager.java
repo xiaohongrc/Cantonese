@@ -1,8 +1,7 @@
 package hong.cantonese.cache;
 
 import android.os.Environment;
-
-import com.umeng.commonsdk.debug.E;
+import android.support.annotation.NonNull;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -14,6 +13,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+
+import hong.cantonese.MyApp;
 
 /**
  * Created by hongenit on 2017/1/16.
@@ -44,16 +45,7 @@ public class CacheManager {
     public ArrayList<String> getSentenceListFromFile() {
         byte[] bytes = null;
         File cacheFile = null;
-        File cacheDir = null;
-        // 如果存储在SD卡上去没有装载SD卡 则直接返回
-        if (Environment.getExternalStorageState() != null
-                && !Environment.getExternalStorageState().equals(
-                Environment.MEDIA_MOUNTED)) {
-            return null;
-        }
-
-        cacheDir = new File(Environment.getExternalStorageDirectory(),
-                rootDir);
+        File cacheDir = getRootDir();
         if (!cacheDir.isDirectory() || !cacheDir.exists()) {
             cacheDir.mkdirs();
         }
@@ -63,7 +55,7 @@ public class CacheManager {
             return null;
         }
         try {
-            bytes = readByteFromFoile(cacheFile);
+            bytes = readByteFromFile(cacheFile);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -73,6 +65,12 @@ public class CacheManager {
         }
         String string = new String(bytes);
         return stringToList(string);
+    }
+
+    @NonNull
+    public File getRootDir() {
+        return new File(MyApp.getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+                rootDir);
     }
 
     private String listToString(ArrayList<String> arrayList) {
@@ -118,14 +116,11 @@ public class CacheManager {
         // 如果无法生成缓存文件名直接返回
 
         File cacheFile = null;
-        File cacheDir = null;
-
-        cacheDir = new File(Environment.getExternalStorageDirectory(),
-                rootDir);
+        File cacheDir = getRootDir();
         if (!cacheDir.isDirectory() || !cacheDir.exists()) {
             cacheDir.mkdirs();
         }
-        if (cacheDir != null && cacheDir.exists()) {
+        if (cacheDir.exists()) {
             cacheFile = new File(cacheDir, fileName);
         } else {
             return;
@@ -144,13 +139,12 @@ public class CacheManager {
             OutputStream fos = new FileOutputStream(file);
             DataOutputStream dos = new DataOutputStream(fos);
             dos.write(data);
-            if (dos != null)
-                dos.close();
+            dos.close();
         }
     }
 
 
-    private byte[] readByteFromFoile(File file) throws IOException {
+    private byte[] readByteFromFile(File file) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream(
                 (int) file.length());
         InputStream fis = new FileInputStream(file);
@@ -164,10 +158,8 @@ public class CacheManager {
             return bos.toByteArray();
         } finally {
             try {
-                if (bis != null)
-                    bis.close();
-                if (bos != null)
-                    bos.close();
+                bis.close();
+                bos.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

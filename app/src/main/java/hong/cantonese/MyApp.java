@@ -1,12 +1,15 @@
 package hong.cantonese;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.google.android.gms.ads.MobileAds;
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.commonsdk.UMConfigure;
+
+import hong.cantonese.utils.MyPref;
 
 import static java.lang.System.currentTimeMillis;
 
@@ -20,7 +23,9 @@ public class MyApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        long st = currentTimeMillis();
+        appContext = this;
+        MyPref.INSTANCE.initPref(this);
+        long st = System.currentTimeMillis();
         System.out.println("st==========" + st);
 
         // 讯飞语音初始化
@@ -29,10 +34,16 @@ public class MyApp extends Application {
         initAdMob();
 
         long et = System.currentTimeMillis();
-        System.out.println(et + "et==========" + (et - st));
+        System.out.println("st==========" + (et - st));
 
     }
 
+    public static Context getContext() {
+        return appContext;
+    }
+
+
+    private static Context appContext;
 
     private void initAdMob() {
         MobileAds.initialize(this, ConstantValue.ADMOB_APP_ID);

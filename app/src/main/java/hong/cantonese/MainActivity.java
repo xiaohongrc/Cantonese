@@ -35,10 +35,12 @@ import com.iflytek.cloud.SpeechError;
 import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import hong.cantonese.adapter.SentenceAdapter;
 import hong.cantonese.cache.CacheManager;
 import hong.cantonese.utils.LogUtil;
+import hong.cantonese.utils.MyPref;
 import hong.cantonese.utils.PermissionUtil;
 import hong.cantonese.voicereco.Synthesizer;
 import hong.cantonese.voicereco.VoiceReco;
@@ -68,11 +70,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private long mLastExitTime;
     private DrawerLayout drawer;
     private AdView adView_main;
+    private static final int MAX_TEXT_NUM = 30;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        long st = currentTimeMillis();
+        long st = System.currentTimeMillis();
         System.out.println("st=onCreate=========" + st);
 
 
@@ -82,7 +85,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         ArrayList<String> listFromFile = CacheManager.getInstance().getSentenceListFromFile();
         if (listFromFile != null && listFromFile.size() > 0 && !TextUtils.isEmpty(listFromFile.get(0))) {
-            voiceTextList = listFromFile;
+            LogUtil.d(this, "text list size =" + listFromFile.size());
+            voiceTextList.clear();
+            if (listFromFile.size() < MAX_TEXT_NUM) {
+                voiceTextList.addAll(listFromFile);
+            } else {
+                for (int i = 0; i < MAX_TEXT_NUM; i++) {
+                    voiceTextList.add(listFromFile.get(i));
+                }
+            }
         }
         lvVoiceTexts = findViewById(R.id.lv_voicetext);
         sentenceAdapter = new SentenceAdapter(voiceTextList, this);
@@ -105,7 +116,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         btVoiceReco = findViewById(R.id.bt_voice_reco);
         adView_main = findViewById(R.id.adView_main);
         btSpeak = findViewById(R.id.bt_speak);
-
         myVoiceDialog = findViewById(R.id.iv_voice_tip);
         MyClickListener recogListener = new MyClickListener();
         btVoiceReco.setOnClickListener(recogListener);
@@ -113,12 +123,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         lvVoiceTexts.setOnItemClickListener(mItemListener);
 
+        GloabalParams.SynthesizerLanguage = MyPref.INSTANCE.readReadingLanguage();
+        setSpeakBtnText();
+        if (GloabalParams.SynthesizerLanguage.equals(ConstantValue.ENGLISH)) {
+            GloabalParams.RecorgnizeLanguage = ConstantValue.LANGUAGE_EN;
+        } else {
+            GloabalParams.RecorgnizeLanguage = ConstantValue.LANGUAGE_CN;
+        }
         voiceReco = new VoiceReco(MainActivity.this);
         synthesizer = new Synthesizer(MainActivity.this);
 
         imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         long et = System.currentTimeMillis();
-        System.out.println(et + "et=onCreate=========" + (et - st));
+        System.out.println(et + "MainActivity onCreate=========" + (et - st));
 
         PermissionUtil.INSTANCE.requestPermission(this, new String[]{Manifest.permission.RECORD_AUDIO}, ConstantValue.PERMISSION_CODE_MIC);
 
@@ -142,12 +159,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (id == R.id.nav_cantonese) {
             GloabalParams.SynthesizerLanguage = ConstantValue.CANTONESE;
+            MyPref.INSTANCE.cacheReadingLanguage(ConstantValue.CANTONESE);
+
             GloabalParams.RecorgnizeLanguage = ConstantValue.LANGUAGE_CN;
             GloabalParams.RecorgnizeAccent = ConstantValue.ACCENT_MANDARIN;
             synthesizer.initSynthesizer();
             voiceReco.initVoiceRecorgnize();
         } else if (id == R.id.nav_english) {
             GloabalParams.SynthesizerLanguage = ConstantValue.ENGLISH;
+            MyPref.INSTANCE.cacheReadingLanguage(ConstantValue.ENGLISH);
             GloabalParams.RecorgnizeLanguage = ConstantValue.LANGUAGE_EN;
             GloabalParams.RecorgnizeAccent = ConstantValue.ACCENT_NULL;
             synthesizer.initSynthesizer();
@@ -155,28 +175,47 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Toast.makeText(this, R.string.en_mode_tip, Toast.LENGTH_LONG).show();
         } else if (id == R.id.nav_sichuan) {
             GloabalParams.SynthesizerLanguage = ConstantValue.SICHUAN;
+            MyPref.INSTANCE.cacheReadingLanguage(ConstantValue.SICHUAN);
             GloabalParams.RecorgnizeLanguage = ConstantValue.LANGUAGE_CN;
             GloabalParams.RecorgnizeAccent = ConstantValue.ACCENT_MANDARIN;
             synthesizer.initSynthesizer();
             voiceReco.initVoiceRecorgnize();
-
         } else if (id == R.id.nav_mandarin) {
             GloabalParams.SynthesizerLanguage = ConstantValue.MANDARIN;
+            MyPref.INSTANCE.cacheReadingLanguage(ConstantValue.MANDARIN);
             GloabalParams.RecorgnizeLanguage = ConstantValue.LANGUAGE_CN;
             GloabalParams.RecorgnizeAccent = ConstantValue.ACCENT_MANDARIN;
             synthesizer.initSynthesizer();
             voiceReco.initVoiceRecorgnize();
-
         } else if (id == R.id.nav_share) {
             share();
-
         } else if (id == R.id.nav_send) {
             marketComment();
         }
+        setSpeakBtnText();
 
 //        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void setSpeakBtnText() {
+        int accentStrId = R.string.accent_cantonese;
+        switch (GloabalParams.SynthesizerLanguage) {
+            case ConstantValue.CANTONESE:
+                accentStrId = R.string.accent_cantonese;
+                break;
+            case ConstantValue.ENGLISH:
+                accentStrId = R.string.accent_english;
+                break;
+            case ConstantValue.SICHUAN:
+                accentStrId = R.string.accent_sichuan;
+                break;
+            case ConstantValue.MANDARIN:
+                accentStrId = R.string.accent_mandarin;
+                break;
+        }
+        btSpeak.setText(String.format(Locale.getDefault(), getString(R.string.speak_text), getString(accentStrId), getString(R.string.reading)));
     }
 
     // 分享
@@ -244,12 +283,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         return;
                     }
                     synthesizer.startSynthesize(textString);
-                    if (voiceTextList.size() > currentIndex) {
-                        if (!voiceTextList.contains(textString)) {
-                            voiceTextList.set(currentIndex, textString);
-                        }
-                    } else {
-                        voiceTextList.add(textString);
+                    if (!voiceTextList.contains(textString)) {
+                        voiceTextList.add(0, textString);
                     }
                     sentenceAdapter.setmVoiceTextList(voiceTextList);
                     imm.hideSoftInputFromWindow(etVoiceText.getWindowToken(), 0);
@@ -286,14 +321,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (isLast && voiceReco != null) {
                 isRecording = false;
                 myVoiceDialog.setVisibility(View.GONE);
+                loadAdView();
                 btVoiceReco.setImageResource(R.drawable.bg_voice_recognize_pre);
                 if (stringBuilder.capacity() > 2 && !voiceTextList.contains(stringBuilder.toString()) && !TextUtils.isEmpty(stringBuilder.toString())) {
                     voiceTextList.add(0, stringBuilder.toString());
                     sentenceAdapter.setmVoiceTextList(voiceTextList);
                     synthesizer.startSynthesize(stringBuilder.toString());
                 }
-
-
             }
 
         }
@@ -351,19 +385,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     private void loadAdView() {
-        if (System.currentTimeMillis() < 1558794555000L) {
+        if (System.currentTimeMillis() < 1559357152000L) {
             LogUtil.d(this, "return ad");
             return;
         }
         AdRequest adRequest = new AdRequest.Builder().build();
+        LogUtil.d(this, "loadAdView");
         adView_main.loadAd(adRequest);
-        adView_main.setAdListener(new AdListener() {
-            @Override
-            public void onAdLoaded() {
-                super.onAdLoaded();
-                LogUtil.d(MainActivity.this, "onAdLoaded()");
-            }
-        });
+//        adView_main.setAdListener(new AdListener() {
+//            @Override
+//            public void onAdLoaded() {
+//                super.onAdLoaded();
+//                LogUtil.d(MainActivity.this, "onAdLoaded()");
+//            }
+//        });
     }
 
     @Override

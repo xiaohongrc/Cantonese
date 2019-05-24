@@ -6,7 +6,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
-    <string name="tip_click_again_exist" >Tap again to exit</string>
+    <string name="tip_click_again_exist">Tap again to exit</string>
     <string name="en_mode_tip">English mode, please speaking english</string>
     <string name="request_permission_mic">you should give us this permission, or you can\'t use the speech recognize function</string>
     <string name="reading">Read</string>
@@ -17,4 +17,5 @@
     <string name="accent_cantonese">Cantonese</string>
     <string name="accent_mandarin">Mandarin</string>
     <string name="app_intro">Real-time pronunciation, using KTC\'s voice synthesis and recognition technology</string>
+    <string name="speak_text">(%1$s)%2$s</string>
 </resources>
